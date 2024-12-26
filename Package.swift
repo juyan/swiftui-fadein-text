@@ -9,17 +9,18 @@ let package = Package(
     products: [
         .library(
             name: "FadeInText",
-            targets: ["FadeInText"]),
+            targets: ["FadeInText"]
+        ),
     ],
     targets: [
         .target(
             name: "FadeInText"
         ),
         .testTarget(
-          name: "FadeInTextTests",
-          dependencies: [
-            "FadeInText"
-          ]
-        )
+            name: "FadeInTextTests",
+            dependencies: [
+                "FadeInText",
+            ]
+        ),
     ]
 )
