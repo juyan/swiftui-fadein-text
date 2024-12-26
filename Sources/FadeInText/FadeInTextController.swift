@@ -38,6 +38,7 @@ public class FadeInTextController: ObservableObject {
   @objc
   private func onFrameUpdate(_ displayLink: CADisplayLink) {
     guard let startTime, !self.chunks.isEmpty else {
+      self.tearDownDisplayLink()
       return
     }
     let time = CACurrentMediaTime() - startTime
@@ -52,8 +53,12 @@ public class FadeInTextController: ObservableObject {
     }
     self.text = updatedString
     if newResult.shouldAnimationFinish {
-      self.displayLink?.invalidate()
-      self.displayLink = nil
+      self.tearDownDisplayLink()
     }
+  }
+  
+  private func tearDownDisplayLink() {
+    self.displayLink?.invalidate()
+    self.displayLink = nil
   }
 }

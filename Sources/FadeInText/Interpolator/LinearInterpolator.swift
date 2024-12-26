@@ -18,7 +18,7 @@ public final class LinearInterpolator: Interpolator {
     
     var newOpacities = [Double]()
     for i in 0..<numberOfChunks {
-      let startTime = Double(i) * (config.appearanceDuration / Double(numberOfChunks))
+      let startTime = Double(i) * config.appearanceDuration / Double(numberOfChunks)
       let newOpacity = max(min(1.0, (currentTime - startTime) / config.fadeInDuration), 0.0)
       newOpacities.append(newOpacity)
     }
