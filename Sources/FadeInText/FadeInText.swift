@@ -5,6 +5,10 @@ public struct FadeInText: View {
     
   @StateObject var controller: FadeInTextController
   
+  public init(text: String, color: Color) {
+    self.init(text: text, color: color, tokenizer: DefaultTokenizer(), interpolator: LinearInterpolator(config: .defaultValue))
+  }
+  
   public init(text: String, color: Color, tokenizer: Tokenizer, interpolator: Interpolator) {
     self._controller = StateObject(
       wrappedValue: FadeInTextController(
@@ -43,7 +47,7 @@ struct ControlledView: View {
     .padding(16)
     .onAppear(perform: {
       Task {
-        try await Task.sleep(nanoseconds: 5000000000)
+        try await Task.sleep(nanoseconds: 2000000000)
         self.show = true
       }
     })

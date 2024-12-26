@@ -8,27 +8,19 @@ public final class LinearInterpolator: Interpolator {
     self.config = config
   }
   
-  public func interpolate(time: Double, previousResult: InterpolationResult) -> InterpolationResult {
-    guard previousResult.opacities.contains(where: { $0 < 1.0 }) else {
-      return InterpolationResult(opacities: [], shouldAnimationFinish: true)
+  public func interpolate(currentTime: Double, numberOfChunks: Int) -> InterpolationResult {
+    if currentTime > config.appearanceDuration + config.fadeInDuration {
+      return InterpolationResult(
+        opacities: Array(repeating: 1.0, count: numberOfChunks),
+        shouldAnimationFinish: true
+      )
     }
     
-    let opacityStep = min(1, FadeInTextController.refreshDuration / config.fadeInDuration)
-    
     var newOpacities = [Double]()
-    for i in 0..<previousResult.opacities.count {
-      let prevOpacity = previousResult.opacities[i]
-      if prevOpacity == 0 {
-        let startTime = Double(i) * (config.appearanceDuration / Double(previousResult.opacities.count))
-        if time > startTime {
-          let newOpacity = min(1.0, (time - startTime) / config.fadeInDuration)
-          newOpacities.append(newOpacity)
-        } else {
-          newOpacities.append(0)
-        }
-      } else {
-        newOpacities.append(min(1.0, prevOpacity + opacityStep))
-      }
+    for i in 0..<numberOfChunks {
+      let startTime = Double(i) * (config.appearanceDuration / Double(numberOfChunks))
+      let newOpacity = max(min(1.0, (currentTime - startTime) / config.fadeInDuration), 0.0)
+      newOpacities.append(newOpacity)
     }
     return InterpolationResult(opacities: newOpacities, shouldAnimationFinish: false)
   }

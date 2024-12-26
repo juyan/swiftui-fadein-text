@@ -11,8 +11,10 @@ public class FadeInTextController: ObservableObject {
   private let rawText: String
   private let interpolator: Interpolator
   
-  public static let refreshDuration = 0.01667
-  
+  private var displayLink: CADisplayLink?
+  private var startTime: Double?
+  private var chunks: [String] = []
+    
   init(rawText: String, color: Color, tokenizer: Tokenizer, interpolator: Interpolator) {
     self.color = UIColor(color)
     let str = AttributedString(stringLiteral: rawText)
@@ -26,38 +28,32 @@ public class FadeInTextController: ObservableObject {
   }
     
   func startAnimation() {
-    let chunks = tokenizer.chunks(text: rawText)
-    
-    Task {
-      var currentTime = 0.0
-      var interpolationResult = InterpolationResult(opacities: Array(repeating: 0, count: chunks.count), shouldAnimationFinish: false)
-
-      while true {
-        do {
-          try await Task.sleep(nanoseconds: UInt64(Self.refreshDuration * 1000 * 1000 * 1000))
-        } catch {}
-        currentTime += Self.refreshDuration
-        let newResult = interpolator.interpolate(time: currentTime, previousResult: interpolationResult)
-        if newResult.shouldAnimationFinish {
-          break
-        } else {
-          interpolationResult = newResult
-        }
-        var updatedString = AttributedString()
-        for (i, chunk) in chunks.enumerated() {
-          let container = AttributeContainer([
-            NSAttributedString.Key.foregroundColor: self.color.withAlphaComponent(newResult.opacities[i])
-          ])
-          let str = AttributedString(chunk, attributes: container)
-          updatedString.append(str)
-        }
-        await updateText(newText: updatedString)
-      }
-    }
+    self.chunks = tokenizer.chunks(text: rawText)
+    self.displayLink = CADisplayLink(target: self, selector: #selector(onFrameUpdate))
+    self.displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
+    self.displayLink?.add(to: RunLoop.main, forMode: .common)
+    startTime = CACurrentMediaTime()
   }
   
-  @MainActor
-  private func updateText(newText: AttributedString) {
-    self.text = newText
+  @objc
+  private func onFrameUpdate(_ displayLink: CADisplayLink) {
+    guard let startTime, !self.chunks.isEmpty else {
+      return
+    }
+    let time = CACurrentMediaTime() - startTime
+    let newResult = interpolator.interpolate(currentTime: time, numberOfChunks: self.chunks.count)
+    var updatedString = AttributedString()
+    for (i, chunk) in chunks.enumerated() {
+      let container = AttributeContainer([
+        NSAttributedString.Key.foregroundColor: self.color.withAlphaComponent(newResult.opacities[i])
+      ])
+      let str = AttributedString(chunk, attributes: container)
+      updatedString.append(str)
+    }
+    self.text = updatedString
+    if newResult.shouldAnimationFinish {
+      self.displayLink?.invalidate()
+      self.displayLink = nil
+    }
   }
 }
