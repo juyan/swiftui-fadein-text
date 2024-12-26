@@ -11,7 +11,7 @@ public class FadeInTextController: ObservableObject {
   private let rawText: String
   private let interpolator: Interpolator
   
-  public static let refreshDuration = 0.05
+  public static let refreshDuration = 0.01667
   
   init(rawText: String, color: Color, tokenizer: Tokenizer, interpolator: Interpolator) {
     self.color = UIColor(color)
