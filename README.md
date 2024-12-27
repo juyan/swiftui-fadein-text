@@ -1,5 +1,11 @@
 # swiftui-fadein-text
 
+![Apache 2.0 License](https://img.shields.io/github/license/juyan/swiftui-fadein-text)
+![Package Releases](https://img.shields.io/github/v/release/juyan/swiftui-fadein-text)
+![Build Results](https://img.shields.io/github/actions/workflow/status/juyan/swiftui-fadein-text/.github/workflows/swift.yml?branch=main)
+![Swift Version](https://img.shields.io/badge/swift-5.5-critical)
+![Supported Platforms](https://img.shields.io/badge/platform-iOS%2015%20-lightgrey)
+
 ## What
 A SwiftUI based fade-in text animation that works for iOS 15 and above.
 
