@@ -33,3 +33,28 @@ Animation Preview:
 
 https://github.com/user-attachments/assets/a2744e7b-b7cf-4952-a174-d130a308437c
 
+## FAQ
+
+### Why not simply use `.opacity(value)`?
+
+In order to animate with different opacity values for different parts of the text, it would require iOS 17 minimum target.
+
+```swift
+  var body: some View {
+    var text = Text("")
+    for chu in chunk {
+      if #available(iOS 17.0, *) {
+        text = text + Text(chu).foregroundStyle(.red.opacity(0.5))
+      } else {
+        // Fallback on earlier versions
+      }
+    }
+    return text
+  }
+```
+### Why not use [textrenderer](https://developer.apple.com/documentation/swiftui/view/textrenderer(_:)) ?
+
+It requires iOS 18 minimum target.
+
+### 
+

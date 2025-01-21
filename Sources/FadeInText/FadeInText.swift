@@ -38,20 +38,24 @@ public struct FadeInText: View {
     @State var show = false
 
     var body: some View {
-      VStack {
-        if show {
-          FadeInText(text: text, color: .black, tokenizer: DefaultTokenizer(), interpolator: interpolator)
-            .font(.title2)
+      ScrollView {
+        VStack {
+          if show {
+            FadeInText(text: text, color: .black, tokenizer: DefaultTokenizer(), interpolator: interpolator)
+              .multilineTextAlignment(.leading)
+              .lineSpacing(6)
+              .font(.title2)
+          }
+          Spacer()
         }
-        Spacer()
+        .padding(16)
+        .onAppear(perform: {
+          Task {
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            self.show = true
+          }
+        })
       }
-      .padding(16)
-      .onAppear(perform: {
-        Task {
-          try await Task.sleep(nanoseconds: 2_000_000_000)
-          self.show = true
-        }
-      })
     }
   }
 
@@ -71,8 +75,8 @@ public struct FadeInText: View {
 
   #Preview("English-EaseOut") {
     ControlledView(
-      text: "Hello! Welcome to FadeInText. The text will fade in smoothly. You are able to tweak the fade in duration by passing a configuration. Enjoy the animation.",
-      interpolator: EaseOutInterpolator(config: .init(fadeInDuration: 2.0, appearanceDuration: 5.0))
+      text: longEnglishText,
+      interpolator: EaseOutInterpolator(config: .init(fadeInDuration: 2.0, appearanceDuration: 10.0))
     )
   }
 
