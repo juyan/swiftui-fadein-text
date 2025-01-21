@@ -40,6 +40,9 @@ public final class DefaultTokenizer: Tokenizer {
       results.append(String(part))
       previousIndex = text.index(after: dedupedIndex)
     }
+    if previousIndex < text.endIndex {
+      results.append(String(text[previousIndex..<text.endIndex]))
+    }
     return results
   }
 }

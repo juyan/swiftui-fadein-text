@@ -21,6 +21,19 @@ final class DefaultTokenizerTests: XCTestCase {
     XCTAssertEqual(expectedOutput.count, output.count)
     XCTAssertEqual(expectedOutput, output)
   }
+  
+  func test_tokenize_englishWithoutPunctuation() {
+    let input = """
+    Enlightenment is man's emergence from his self-imposed immaturity
+    """
+    
+    let tokenizer = DefaultTokenizer()
+    let output = tokenizer.chunks(text: input)
+    
+    let expectedOutput = ["Enlightenment ", "is ", "man'", "s ", "emergence ", "from ", "his ", "self-", "imposed ", "immaturity"]
+    XCTAssertEqual(expectedOutput.count, output.count)
+    XCTAssertEqual(expectedOutput, output)
+  }
 
   func test_tokenize_cjk() {
     let input = """
